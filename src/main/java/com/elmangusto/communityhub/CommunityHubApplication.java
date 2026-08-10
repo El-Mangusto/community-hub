@@ -3,11 +3,17 @@ package com.elmangusto.communityhub;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.TimeZone;
+
 @SpringBootApplication
 public class CommunityHubApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(CommunityHubApplication.class, args);
-	}
+    static {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(CommunityHubApplication.class, args);
+    }
 
 }
