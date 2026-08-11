@@ -36,7 +36,7 @@ public class AdminUserController {
         return userService.getAll(pageable, principal);
     }
 
-    @PatchMapping("/{id}/ban")
+    @PatchMapping("/{id}/status")
     public UserResponse setStatus(@PathVariable Long id,
                                      @RequestBody @Valid UserStatusRequest request,
                                      @AuthenticationPrincipal CustomUserDetails principal) {

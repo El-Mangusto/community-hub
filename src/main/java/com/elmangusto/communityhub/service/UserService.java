@@ -28,12 +28,6 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Page<UserResponse> getAll(Pageable pageable, CustomUserDetails principal) {
-        boolean isAdmin = principal.user().getRole() == UserRole.ADMIN;
-
-        if (!isAdmin) {
-            throw new AccessDeniedException("Access denied");
-        }
-
         return userRepository.findAll(pageable)
                 .map(userMapper::toResponse);
     }
@@ -41,7 +35,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponse getById(Long id, CustomUserDetails principal) {
         boolean isSelf = principal.getId().equals(id);
-        boolean isAdmin = principal.user().getRole() == UserRole.ADMIN;
+        boolean isAdmin = principal.user().getRole().isAtLeast(UserRole.ADMIN);
 
         if (!isSelf && !isAdmin) {
             throw new AccessDeniedException("You are not allowed to view this user");
@@ -61,7 +55,7 @@ public class UserService {
         boolean isSelf = principal.getId().equals(id);
 
         if (isSelf) {
-            throw new AccessDeniedException("You cannot ban/unban yourself");
+            throw new AccessDeniedException("You cannot change status yourself");
         }
 
         User user = userRepository.findById(id)
