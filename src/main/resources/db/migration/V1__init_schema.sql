@@ -17,7 +17,7 @@ CREATE TABLE news
 (
     id BIGINT PRIMARY KEY DEFAULT nextval('news_seq'),
     user_id BIGINT NOT NULL,
-    title VARCHAR(255),
+    title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
     date_time TIMESTAMP NOT NULL,
     CONSTRAINT fk_news_user FOREIGN KEY (user_id) REFERENCES users (id)
