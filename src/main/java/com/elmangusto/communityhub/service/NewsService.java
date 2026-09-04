@@ -9,6 +9,8 @@ import com.elmangusto.communityhub.repository.NewsRepository;
 import com.elmangusto.communityhub.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,12 @@ public class NewsService {
         log.info("User created news successfully. newsId={}, userId={}", saved.getId(), principal.getId());
 
         return newsMapper.toResponse(saved);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<NewsResponse> getAll(Pageable pageable) {
+        return newsRepository.findAll(pageable)
+                .map(newsMapper::toResponse);
     }
 
     @Transactional(readOnly = true)

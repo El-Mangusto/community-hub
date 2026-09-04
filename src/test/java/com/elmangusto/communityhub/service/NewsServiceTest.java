@@ -2,6 +2,7 @@ package com.elmangusto.communityhub.service;
 
 import com.elmangusto.communityhub.dto.request.NewsCreateRequest;
 import com.elmangusto.communityhub.dto.response.NewsResponse;
+import com.elmangusto.communityhub.dto.response.UserResponse;
 import com.elmangusto.communityhub.dto.response.UserSummaryResponse;
 import com.elmangusto.communityhub.entity.News;
 import com.elmangusto.communityhub.entity.User;
@@ -16,8 +17,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -76,6 +82,52 @@ class NewsServiceTest {
         NewsResponse result = newsService.getById(NEWS_ID);
 
         assertThat(result).isEqualTo(response);
+    }
+
+    @Test
+    void getAll_shouldReturnPageOfUser_whenUsersExist() {
+
+        User user = getUser();
+        News news = getNews(user);
+        NewsResponse newsResponse = getResponse();
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<News> newsPage = new PageImpl<>(List.of(news));
+
+        when(newsRepository.findAll(pageable))
+                .thenReturn(newsPage);
+
+        when(newsMapper.toResponse(news))
+                .thenReturn(newsResponse);
+
+        Page<NewsResponse> result = newsService.getAll(pageable);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().getFirst()).isEqualTo(newsResponse);
+        assertThat(result.getTotalElements()).isEqualTo(1);
+
+        verify(newsRepository).findAll(pageable);
+        verify(newsMapper).toResponse(news);
+        verifyNoMoreInteractions(newsRepository, newsMapper);
+    }
+
+    @Test
+    void getAll_shouldReturnEmptyPage_whenNoUsersExist() {
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<News> emptyPage = Page.empty(pageable);
+
+        when(newsRepository.findAll(pageable))
+                .thenReturn(emptyPage);
+
+        Page<NewsResponse> result = newsService.getAll(pageable);
+
+        assertThat(result).isNotNull();
+        assertThat(result).isEmpty();
+
+        verify(newsRepository).findAll(pageable);
+        verifyNoInteractions(newsMapper);
     }
 
     @Test
