@@ -6,6 +6,8 @@ import com.elmangusto.communityhub.dto.response.UserSummaryResponse;
 import com.elmangusto.communityhub.entity.News;
 import com.elmangusto.communityhub.entity.User;
 import com.elmangusto.communityhub.entity.enums.UserRole;
+import com.elmangusto.communityhub.entity.enums.UserStatus;
+import com.elmangusto.communityhub.exception.ResourceNotFoundException;
 import com.elmangusto.communityhub.mapper.NewsMapper;
 import com.elmangusto.communityhub.repository.NewsRepository;
 import com.elmangusto.communityhub.security.CustomUserDetails;
@@ -16,15 +18,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class NewsServiceTest {
 
     private static final Long USER_ID = 1L;
-    private static final Long NEWS_ID = 10L;
+    private static final Long NEWS_ID = 1L;
 
     @Mock
     private NewsRepository newsRepository;
@@ -55,6 +59,41 @@ class NewsServiceTest {
         verify(newsRepository).save(mappedNews);
     }
 
+    @Test
+    void getById_shouldReturnNews_whenNewsExist() {
+
+        User user = getUser();
+        News news = getNews(user);
+
+        when(newsRepository.findById(NEWS_ID))
+                .thenReturn(Optional.of(news));
+
+        NewsResponse response = getResponse();
+
+        when(newsMapper.toResponse(news))
+                .thenReturn(response);
+
+        NewsResponse result = newsService.getById(NEWS_ID);
+
+        assertThat(result).isEqualTo(response);
+    }
+
+    @Test
+    void getById_shouldThrowResourceNotFoundException_whenNewsDoesNotExist() {
+
+        User user = getUser();
+        News news = getNews(user);
+
+        when(newsRepository.findById(NEWS_ID))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> newsService.getById(NEWS_ID))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("1");
+
+        verify(newsRepository).findById(NEWS_ID);
+    }
+
     private static NewsCreateRequest getRequest() {
         return new NewsCreateRequest("Title", "Content");
     }
@@ -76,5 +115,25 @@ class NewsServiceTest {
                 "Content",
                 LocalDateTime.now()
         );
+    }
+
+    private static News getNews(User user) {
+        return News.builder()
+                .id(NEWS_ID)
+                .user(user)
+                .title("Title")
+                .content("Content")
+                .dateTime(LocalDateTime.now())
+                .build();
+    }
+
+    private static User getUser() {
+        return User.builder()
+                .id(USER_ID)
+                .username("testUser")
+                .password("12345678")
+                .role(UserRole.USER)
+                .status(UserStatus.ACTIVE)
+                .build();
     }
 }

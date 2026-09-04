@@ -7,10 +7,7 @@ import com.elmangusto.communityhub.service.NewsService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +20,11 @@ public class NewsController {
     public NewsResponse createNews(@RequestBody @Valid NewsCreateRequest request,
                             @AuthenticationPrincipal CustomUserDetails principal) {
         return newsService.createNews(request, principal);
+    }
+
+    @GetMapping("/{id}")
+    public NewsResponse getById(@PathVariable Long id) {
+        return newsService.getById(id);
     }
 
 }

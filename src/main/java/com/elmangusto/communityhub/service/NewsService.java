@@ -3,6 +3,7 @@ package com.elmangusto.communityhub.service;
 import com.elmangusto.communityhub.dto.request.NewsCreateRequest;
 import com.elmangusto.communityhub.dto.response.NewsResponse;
 import com.elmangusto.communityhub.entity.News;
+import com.elmangusto.communityhub.exception.ResourceNotFoundException;
 import com.elmangusto.communityhub.mapper.NewsMapper;
 import com.elmangusto.communityhub.repository.NewsRepository;
 import com.elmangusto.communityhub.security.CustomUserDetails;
@@ -31,5 +32,13 @@ public class NewsService {
         log.info("User created news successfully. newsId={}, userId={}", saved.getId(), principal.getId());
 
         return newsMapper.toResponse(saved);
+    }
+
+    @Transactional(readOnly = true)
+    public NewsResponse getById(Long id) {
+        News news = newsRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("News", id));
+
+        return newsMapper.toResponse(news);
     }
 }
