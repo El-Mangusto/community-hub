@@ -76,7 +76,7 @@ class NewsControllerTest {
                 LocalDateTime.now()
         );
 
-        when(newsService.createNews(any(NewsCreateRequest.class), any(CustomUserDetails.class)))
+        when(newsService.create(any(NewsCreateRequest.class), any(CustomUserDetails.class)))
                 .thenReturn(response);
 
         mockMvc.perform(post("/api/v1/news")

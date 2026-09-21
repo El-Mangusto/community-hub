@@ -58,7 +58,7 @@ class NewsServiceTest {
         when(newsRepository.save(mappedNews)).thenReturn(savedNews);
         when(newsMapper.toResponse(savedNews)).thenReturn(expectedResponse);
 
-        NewsResponse result = newsService.createNews(request, principal);
+        NewsResponse result = newsService.create(request, principal);
 
         assertThat(result).isEqualTo(expectedResponse);
         assertThat(mappedNews.getUser()).isEqualTo(principal.getUser());

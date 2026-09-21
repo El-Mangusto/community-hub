@@ -23,7 +23,7 @@ public class NewsService {
     private final NewsRepository newsRepository;
     private final NewsMapper newsMapper;
 
-    public NewsResponse createNews(NewsCreateRequest request, CustomUserDetails principal) {
+    public NewsResponse create(NewsCreateRequest request, CustomUserDetails principal) {
 
         log.info("Creating news by a user userId={}", principal.getId());
 

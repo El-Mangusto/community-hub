@@ -21,9 +21,9 @@ public class NewsController {
     private final NewsService newsService;
 
     @PostMapping
-    public NewsResponse createNews(@RequestBody @Valid NewsCreateRequest request,
+    public NewsResponse create(@RequestBody @Valid NewsCreateRequest request,
                             @AuthenticationPrincipal CustomUserDetails principal) {
-        return newsService.createNews(request, principal);
+        return newsService.create(request, principal);
     }
 
     @GetMapping

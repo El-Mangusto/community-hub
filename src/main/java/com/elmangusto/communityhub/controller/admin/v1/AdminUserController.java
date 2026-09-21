@@ -30,7 +30,7 @@ public class AdminUserController {
     @GetMapping
     public Page<UserResponse> getAll(
             @ParameterObject
-            @PageableDefault(size = 10, sort = "login")
+            @PageableDefault(size = 10, sort = "username")
             Pageable pageable,
             @AuthenticationPrincipal CustomUserDetails principal) {
         return userService.getAll(pageable, principal);
