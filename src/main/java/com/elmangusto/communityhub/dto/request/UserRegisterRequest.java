@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public record UserRegisterRequest(
 
-        @NotBlank(message = "Username number is required")
+        @NotBlank(message = "Username is required")
         String username,
 
         @NotBlank(message = "Password number is required")
