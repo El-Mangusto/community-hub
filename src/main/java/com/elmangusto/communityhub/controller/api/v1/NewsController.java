@@ -29,7 +29,7 @@ public class NewsController {
     @GetMapping
     public Page<NewsResponse> getAll(
             @ParameterObject
-            @PageableDefault(size = 10, sort = "login")
+            @PageableDefault(size = 10, sort = "dateTime")
             Pageable pageable
     ) {
         return newsService.getAll(pageable);
